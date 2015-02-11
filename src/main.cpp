@@ -1310,12 +1310,11 @@ static const int64_t nLocalDifficultyAdjustment = 4; // 4% down, 16% up
 
 static const int64_t nTargetTimespanAdjDown = multiAlgoTargetTimespan * (100 + nMaxAdjustDown) / 100;
 
-
-
 //
 // minimum amount of work that could possibly be required nTime after
 // minimum work required was nBase
 //
+
 unsigned int ComputeMinWork(unsigned int nBase, int64_t nTime)
 {
  return Params().ProofOfWorkLimit(ALGO_SHA256D).GetCompact(); 
@@ -1332,7 +1331,7 @@ unsigned int ComputeMinWork(unsigned int nBase, int64_t nTime)
     if (bnResult > Params().ProofOfWorkLimit(ALGO_SHA256D))
         bnResult = Params().ProofOfWorkLimit(ALGO_SHA256D);
     return bnResult.GetCompact();
-}
+} 
 
 static const int64_t nMinActualTimespan = nAveragingTargetTimespan * (100 - nMaxAdjustUp) / 100;
 static const int64_t nMaxActualTimespan = nAveragingTargetTimespan * (100 + nMaxAdjustDown) / 100;
