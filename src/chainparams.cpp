@@ -57,17 +57,19 @@ public:
         genesis.hashMerkleRoot = genesis.BuildMerkleTree();
         genesis.nVersion = 1;
         genesis.nTime    = 1405002383;
-        genesis.nBits    = 486604799;
+        genesis.nBits    = 0x1d00ffff;
         genesis.nNonce   = 231373351; //2447652
  
 		printf("%s\n", genesis.hashMerkleRoot.ToString().c_str());
         printf("genesis.nTime = %u \n", genesis.nTime);
         printf("genesis.nNonce = %u \n", genesis.nNonce);
         printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
- 		
+		hashGenesisBlock = genesis.GetHash();
+ 		assert(genesis.hashMerkleRoot == uint256("0xa99c7c572f07503bb52506cc6bcc18a0653d78c9c34fd7b576fe093723554bac"));
+		
         assert(hashGenesisBlock == uint256("0x00000000692c5ed1da2f480cd8d6aa6aa6b16deff49c26bf5a773120328b8b12")); //0x7497ea1b465eb39f1c8f507bc877078fe016d6fcb6dfad3a64c98dcc6e1e8496
-        assert(genesis.hashMerkleRoot == uint256("0xa99c7c572f07503bb52506cc6bcc18a0653d78c9c34fd7b576fe093723554bac"));
-        hashGenesisBlock = genesis.GetHash();
+        
+        
 
        // If genesis block hash does not match, then generate new genesis hash.
 	   // first run, take merklehash, insert and then recompile and run for genesis hash
@@ -113,16 +115,14 @@ public:
         printf("genesis.nNonce = %u \n", genesis.nNonce);
         printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
 	}
-        vSeeds.push_back(CDNSSeedData("seed #0", "node1.unat.ga"));
-        vSeeds.push_back(CDNSSeedData("seed #1", "192.168.154.128"));
-        vSeeds.push_back(CDNSSeedData("seed #2", "192.168.154.129"));
-		vSeeds.push_back(CDNSSeedData("seed #3", "192.168.2.46"));
-		vSeeds.push_back(CDNSSeedData("seed #4", "192.168.2.39"));
-		vSeeds.push_back(CDNSSeedData("seed #5", "82.75.141.118:12022"));
-		vSeeds.push_back(CDNSSeedData("seed #6", "82.75.141.118:12028"));
-		vSeeds.push_back(CDNSSeedData("seed #6", "82.75.141.118"));
-		vSeeds.push_back(CDNSSeedData("seed #7", "192.168.2.46:12022"));
-		vSeeds.push_back(CDNSSeedData("seed #8", "192.168.2.46"));
+        vSeeds.push_back(CDNSSeedData("seed #0", "137.135.57.205"));
+        vSeeds.push_back(CDNSSeedData("seed #1", "192.99.21.103"));
+        vSeeds.push_back(CDNSSeedData("seed #2", "46.28.205.70"));
+		vSeeds.push_back(CDNSSeedData("seed #3", "47.17.84.135"));
+		vSeeds.push_back(CDNSSeedData("seed #4", "70.70.136.216"));
+		vSeeds.push_back(CDNSSeedData("seed #5", "75.130.163.51"));
+		vSeeds.push_back(CDNSSeedData("seed #6", "76.164.203.26"));
+		vSeeds.push_back(CDNSSeedData("seed #6", "76.164.237.242"));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(0);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(5);

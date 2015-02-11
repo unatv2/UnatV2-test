@@ -52,7 +52,7 @@ inline int GetAlgo(int nVersion)
         case BLOCK_VERSION_QUBIT:
             return ALGO_QUBIT;
     }
-    return ALGO_SCRYPT;
+    return ALGO_SHA256D;
 }
 
 inline std::string GetAlgoName(int Algo)
