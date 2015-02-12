@@ -118,10 +118,10 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, int algo)
 
     switch (algo)
     {
-        case ALGO_SCRYPT:
-            break;
         case ALGO_SHA256D:
-            pblock->nVersion |= BLOCK_VERSION_SHA256D;
+            break;
+        case ALGO_SCRYPT:
+            pblock->nVersion |= BLOCK_VERSION_SCRYPT;
             break;
         case ALGO_GROESTL:
             pblock->nVersion |= BLOCK_VERSION_GROESTL;
@@ -136,7 +136,7 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, int algo)
             error("CreateNewBlock: bad algo");
             return NULL;
     }
-    if (pindexPrev->nHeight < multiAlgoDiffChangeTarget && algo != ALGO_SCRYPT) {
+    if (pindexPrev->nHeight < multiAlgoDiffChangeTarget && algo != ALGO_SHA256D) {
 	    error("MultiAlgo is not yet active. Current block height %d, height multialgo becomes active %d", pindexPrev->nHeight, multiAlgoDiffChangeTarget);
             return NULL;
     }

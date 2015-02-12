@@ -71,50 +71,7 @@ public:
         
         
 
-       // If genesis block hash does not match, then generate new genesis hash.
-	   // first run, take merklehash, insert and then recompile and run for genesis hash
-    if (genesis.GetHash() != hashGenesisBlock)
-    {
-        printf("Searching for genesis block...\n");
-        // This will figure out a valid hash and Nonce if you're
-        // creating a different genesis block:
-        uint256 hashTarget = CBigNum().SetCompact(genesis.nBits).getuint256();
-        uint256 thash;
-		char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
-        while(true)
-        {
-            #if defined(USE_SSE2)
-                // Detection would work, but in cases where we KNOW it always has SSE2,
-                // it is faster to use directly than to use a function pointer or conditional.
-			#if defined(_M_X64) || defined(__x86_64__) || defined(_M_AMD64) || (defined(MAC_OSX) && defined(__i386__))
-                // Always SSE2: x86_64 or Intel MacOS X
-                scrypt_1024_1_1_256_sp_sse2(BEGIN(genesis.nVersion), BEGIN(thash), scratchpad);
-			#else
-                // Detect SSE2: 32bit x86 Linux or Windows
-                scrypt_1024_1_1_256_sp(BEGIN(genesis.nVersion), BEGIN(thash), scratchpad);
-			#endif
-			#else
-                // Generic scrypt
-                scrypt_1024_1_1_256_sp_generic(BEGIN(genesis.nVersion), BEGIN(thash), scratchpad);
-			#endif
-            if (thash <= hashTarget)
-                break;
-            if ((genesis.nNonce & 0xFFF) == 0)
-            {
-                printf("nonce %08X: hash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
-            }
-            ++genesis.nNonce;
-            if (genesis.nNonce == 0)
-            {
-                printf("NONCE WRAPPED, incrementing time\n");
-                ++genesis.nTime;
-            }
-        }
-		printf("genesis.hashMerkleRoot =%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        printf("genesis.nTime = %u \n", genesis.nTime);
-        printf("genesis.nNonce = %u \n", genesis.nNonce);
-        printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
-	}
+
         vSeeds.push_back(CDNSSeedData("seed #0", "137.135.57.205"));
         vSeeds.push_back(CDNSSeedData("seed #1", "192.99.21.103"));
         vSeeds.push_back(CDNSSeedData("seed #2", "46.28.205.70"));
@@ -183,56 +140,13 @@ public:
         hashGenesisBlock = genesis.GetHash();
         assert(hashGenesisBlock == uint256("0x00000000692c5ed1da2f480cd8d6aa6aa6b16deff49c26bf5a773120328b8b12")); //0x7497ea1b465eb39f1c8f507bc877078fe016d6fcb6dfad3a64c98dcc6e1e8496
 		assert(genesis.hashMerkleRoot == uint256("0xa99c7c572f07503bb52506cc6bcc18a0653d78c9c34fd7b576fe093723554bac"));
-		// If genesis block hash does not match, then generate new genesis hash.
-	    // first run, take merklehash, insert and then recompile and run for genesis hash
-    if (genesis.GetHash() != hashGenesisBlock)
-    {
-        printf("Searching for genesis block...\n");
-        // This will figure out a valid hash and Nonce if you're
-        // creating a different genesis block:
-        uint256 hashTarget = CBigNum().SetCompact(genesis.nBits).getuint256();
-        uint256 thash;
-		char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
-        while(true)
-        {
-            #if defined(USE_SSE2)
-                // Detection would work, but in cases where we KNOW it always has SSE2,
-                // it is faster to use directly than to use a function pointer or conditional.
-			#if defined(_M_X64) || defined(__x86_64__) || defined(_M_AMD64) || (defined(MAC_OSX) && defined(__i386__))
-                // Always SSE2: x86_64 or Intel MacOS X
-                scrypt_1024_1_1_256_sp_sse2(BEGIN(genesis.nVersion), BEGIN(thash), scratchpad);
-			#else
-                // Detect SSE2: 32bit x86 Linux or Windows
-                scrypt_1024_1_1_256_sp(BEGIN(genesis.nVersion), BEGIN(thash), scratchpad);
-			#endif
-			#else
-                // Generic scrypt
-                scrypt_1024_1_1_256_sp_generic(BEGIN(genesis.nVersion), BEGIN(thash), scratchpad);
-			#endif
-            if (thash <= hashTarget)
-                break;
-            if ((genesis.nNonce & 0xFFF) == 0)
-            {
-                printf("nonce %08X: hash = %s (target = %s)\n", genesis.nNonce, thash.ToString().c_str(), hashTarget.ToString().c_str());
-            }
-            ++genesis.nNonce;
-            if (genesis.nNonce == 0)
-            {
-                printf("NONCE WRAPPED, incrementing time\n");
-                ++genesis.nTime;
-            }
-        }
-		printf("genesis.hashMerkleRoot =%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        printf("genesis.nTime = %u \n", genesis.nTime);
-        printf("genesis.nNonce = %u \n", genesis.nNonce);
-        printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
-	}
+	
         //assert(hashGenesisBlock == uint256("0xb5dca8039e300198e5fe7cd23bdd1728e2a444af34c447dbd0916fa3430a68c2"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        //vSeeds.push_back(CDNSSeedData("unattainiumv2.petertodd.org", "testnet-seed.unattainiumv2.petertodd.org"));
-        //vSeeds.push_back(CDNSSeedData("bluematt.me", "testnet-seed.bluematt.me"));
+        //vSeeds.push_back(CDNSSeedData("", ""));
+        //vSeeds.push_back(CDNSSeedData("", ""));
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(111);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(196);
@@ -256,6 +170,11 @@ public:
         pchMessageStart[2] = 0xb2;
         pchMessageStart[3] = 0xdb;
         //nSubsidyHalvingInterval = 150;
+        bnProofOfWorkLimit[ALGO_SHA256D] = CBigNum(~uint256(0) >> 1);
+        bnProofOfWorkLimit[ALGO_SCRYPT]  = CBigNum(~uint256(0) >> 1);
+        bnProofOfWorkLimit[ALGO_GROESTL] = CBigNum(~uint256(0) >> 1);
+        bnProofOfWorkLimit[ALGO_SKEIN]   = CBigNum(~uint256(0) >> 1);
+        bnProofOfWorkLimit[ALGO_QUBIT]   = CBigNum(~uint256(0) >> 1);
        // bnProofOfWorkLimit = CBigNum();
         genesis.nTime = 1392796564;
         genesis.nBits = 0x207fffff;

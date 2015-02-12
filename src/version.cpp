@@ -38,7 +38,7 @@ const std::string CLIENT_NAME("UnattainiumV2");
 #define GIT_ARCHIVE 1
 #ifdef GIT_ARCHIVE
 #    define GIT_COMMIT_ID "354c0f3"
-#    define GIT_COMMIT_DATE "Thu, 19 Jun 2014 09:51:15 +0200"
+#    define GIT_COMMIT_DATE "Wed, 11 Feb 2015 09:51:15 +0200"
 #endif
 
 #define BUILD_DESC_WITH_SUFFIX(maj,min,rev,build,suffix) \

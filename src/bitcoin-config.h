@@ -9,19 +9,19 @@
 /* #undef AC_APPLE_UNIVERSAL_BUILD */
 
 /* Version Build */
-#define CLIENT_VERSION_BUILD 0
+#define CLIENT_VERSION_BUILD 1
 
 /* Version is release */
 #define CLIENT_VERSION_IS_RELEASE true
 
 /* Major version */
-#define CLIENT_VERSION_MAJOR 8
+#define CLIENT_VERSION_MAJOR 0
 
 /* Minor version */
 #define CLIENT_VERSION_MINOR 9
 
 /* Build revision */
-#define CLIENT_VERSION_REVISION 0
+#define CLIENT_VERSION_REVISION 2
 
 /* Version is release */
 #define COPYRIGHT_YEAR 2014
@@ -205,7 +205,7 @@
 #define PACKAGE_NAME "UnattainiumV2 Core"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "UnattainiumV2 Core 3.0.2"
+#define PACKAGE_STRING "UnattainiumV2 Core 0.9.2"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "bitcoin"
@@ -214,7 +214,7 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "3.0.2"
+#define PACKAGE_VERSION "0.9.2"
 
 /* Define to necessary symbol if this constant uses a non-standard name on
    your system. */

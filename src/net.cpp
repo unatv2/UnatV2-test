@@ -7,8 +7,8 @@
 #include "bitcoin-config.h"
 #endif
 
-//#include "irc.h"
 #include "net.h"
+
 #include "addrman.h"
 #include "chainparams.h"
 #include "core.h"
@@ -343,7 +343,6 @@ bool GetMyExternalIP2(const CService& addrConnect, const char* pszGet, const cha
     return error("GetMyExternalIP() : connection closed");
 }
 
-// We now get our external IP from the IRC server first and only use this as a backup
 bool GetMyExternalIP(CNetAddr& ipRet)
 {
     CService addrConnect;
@@ -1742,9 +1741,6 @@ void StartNode(boost::thread_group& threadGroup)
     MapPort(GetBoolArg("-upnp", USE_UPNP));
 #endif
 
-    // Get addresses from IRC and advertise ours
-	//threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "irc", &ThreadIRCSeed));
-	
     // Send and receive from sockets, accept connections
     threadGroup.create_thread(boost::bind(&TraceThread<void (*)()>, "net", &ThreadSocketHandler));
 

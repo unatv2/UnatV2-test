@@ -60,11 +60,6 @@ quint64 ClientModel::getTotalBytesRecv() const
     return CNode::GetTotalBytesRecv();
 }
 
-quint64 ClientModel::getMoneySupply()
-{
-   return chainActive.Tip()->nMoneySupply;
-}
-
 quint64 ClientModel::getTotalBytesSent() const
 {
     return CNode::GetTotalBytesSent();

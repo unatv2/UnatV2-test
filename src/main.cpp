@@ -1253,7 +1253,6 @@ static const long hextable[] =
         -1, -1, -1, -1, -1, -1
 };
 
-
 long hex2long(const char* hexString)
 {
         long ret = 0; 
@@ -2047,10 +2046,6 @@ bool ConnectBlock(CBlock& block, CValidationState& state, CBlockIndex* pindex, C
         vPos.push_back(std::make_pair(block.GetTxHash(i), pos));
         pos.nTxOffset += ::GetSerializeSize(tx, SER_DISK, CLIENT_VERSION);
     }
-	
-	// track money supply 
-	pindex->nMoneySupply = (pindex->pprev? pindex->pprev->nMoneySupply : 0) + nValueOut - nValueIn;
-	
     int64_t nTime = GetTimeMicros() - nStart;
     if (fBenchmark)
         LogPrintf("- Connect %u transactions: %.2fms (%.3fms/tx, %.3fms/txin)\n", (unsigned)block.vtx.size(), 0.001 * nTime, 0.001 * nTime / block.vtx.size(), nInputs <= 1 ? 0 : 0.001 * nTime / (nInputs-1));
@@ -3068,7 +3063,9 @@ bool static LoadBlockIndexDB()
         pindex->nChainWork = (pindex->pprev ? pindex->pprev->nChainWork : 0) + pindex->GetBlockWorkAdjusted().getuint256();
         pindex->nChainTx = (pindex->pprev ? pindex->pprev->nChainTx : 0) + pindex->nTx;
         if ((pindex->nStatus & BLOCK_VALID_MASK) >= BLOCK_VALID_TRANSACTIONS && !(pindex->nStatus & BLOCK_FAILED_MASK))
+        {
             setBlockIndexValid.insert(pindex);
+        }
         if (pindex->nStatus & BLOCK_FAILED_MASK && (!pindexBestInvalid || pindex->nChainWork > pindexBestInvalid->nChainWork))
             pindexBestInvalid = pindex;
     }
@@ -3646,6 +3643,39 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (!vRecv.empty()) {
             vRecv >> pfrom->strSubVer;
             pfrom->cleanSubVer = SanitizeString(pfrom->strSubVer);
+/*
+            if (
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.1/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.2/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.3/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.4/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.5/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.6/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.7/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.8/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.9/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.10/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.11/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.12/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.1/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.2/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.3/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.4/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.5/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.6/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.7/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.8/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.9/")
+               )
+            {
+                // disconnect from peers older than this proto version
+                LogPrintf("partner %s using obsolete sub version %s; disconnecting\n", pfrom->addr.ToString(), pfrom->cleanSubVer);
+                pfrom->PushMessage("reject", strCommand, REJECT_OBSOLETE,
+                    strprintf("Version must be %d or greater", MIN_PEER_PROTO_VERSION));
+                pfrom->fDisconnect = true;
+                return false;
+            }
+*/
         }
         if (!vRecv.empty())
             vRecv >> pfrom->nStartingHeight;
@@ -4573,8 +4603,8 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
         // in flight for over two minutes, since we first had a chance to
         // process an incoming block.
         int64_t nNow = GetTimeMicros();
-        if (!pto->fDisconnect && state.nBlocksInFlight && 
-            state.nLastBlockReceive < state.nLastBlockProcess - BLOCK_DOWNLOAD_TIMEOUT*1000000 && 
+        if (!pto->fDisconnect && state.nBlocksInFlight &&
+            state.nLastBlockReceive < state.nLastBlockProcess - BLOCK_DOWNLOAD_TIMEOUT*1000000 &&
             state.vBlocksInFlight.front().nTime < state.nLastBlockProcess - 2*BLOCK_DOWNLOAD_TIMEOUT*1000000) {
             LogPrintf("Peer %s is stalling block download, disconnecting\n", state.name.c_str());
             pto->fDisconnect = true;

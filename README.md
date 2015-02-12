@@ -27,8 +27,9 @@ sudo cp unattainiumv2d /usr/bin
 UnattainiumV2 Core integration/staging tree
 =====================================
 
-http://www.unat.ga
+http://www.unattainium.tk
 
+Copyright (c) 2009-2014 Bitcoin Core Developers
 Copyright (c) 2009-2014 UnattainiumV2 Core Developers
 
 What is UnattainiumV2?
@@ -54,7 +55,7 @@ Technical Specifications
  
 Links
 ------------------------
-Website: http://www.unat.ga
+Website: http://www.unattainium.tk
 
 BitcoinTalk: https://bitcointalk.org/index.php?topic=
 

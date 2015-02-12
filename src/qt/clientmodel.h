@@ -47,7 +47,7 @@ public:
     int getNumConnections(unsigned int flags = CONNECTIONS_ALL) const;
     int getNumBlocks() const;
     int getNumBlocksAtStartup();
-    quint64 getMoneySupply();
+
     quint64 getTotalBytesRecv() const;
     quint64 getTotalBytesSent() const;
 

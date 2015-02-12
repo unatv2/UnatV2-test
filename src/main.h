@@ -704,10 +704,7 @@ public:
 
     // height of the entry in the chain. The genesis block has height 0
     int nHeight;
-	
-	// track money supply
-	uint64_t nMoneySupply;
-	
+
     // Which # file this block is stored in (blk?????.dat)
     int nFile;
 
@@ -749,7 +746,7 @@ public:
         nDataPos = 0;
         nUndoPos = 0;
         nChainWork = 0;
-		nMoneySupply = 0;
+
         nTx = 0;
         nChainTx = 0;
         nStatus = 0;
@@ -771,7 +768,7 @@ public:
         nDataPos = 0;
         nUndoPos = 0;
         nChainWork = 0;
-		nMoneySupply = 0;
+
         nTx = 0;
         nChainTx = 0;
         nStatus = 0;
@@ -903,9 +900,8 @@ public:
 
     std::string ToString() const
     {
-        return strprintf("CBlockIndex(pprev=%p, nHeight=%d, nMoneySupply=%s, merkle=%s, hashBlock=%s)",
+        return strprintf("CBlockIndex(pprev=%p, nHeight=%d, merkle=%s, hashBlock=%s)",
             pprev, nHeight,
-			FormatMoney(nMoneySupply).c_str(),
             hashMerkleRoot.ToString().c_str(),
             GetBlockHash().ToString().c_str());
     }
@@ -939,7 +935,6 @@ public:
             READWRITE(VARINT(nVersion));
 
         READWRITE(VARINT(nHeight));
-		READWRITE(nMoneySupply);
         READWRITE(VARINT(nStatus));
         READWRITE(VARINT(nTx));
         if (nStatus & (BLOCK_HAVE_DATA | BLOCK_HAVE_UNDO))
