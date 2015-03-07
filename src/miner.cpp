@@ -349,10 +349,8 @@ CBlockTemplate* CreateNewBlock(const CScript& scriptPubKeyIn, int algo)
         nLastBlockTx = nBlockTx;
         nLastBlockSize = nBlockSize;
         LogPrintf("CreateNewBlock(): total size %u\n", nBlockSize);
- 
-        uint256 prevHash = 0;
- 
-        pblock->vtx[0].vout[0].nValue = GetBlockValue(pindexPrev->nHeight+1, nFees, prevHash);
+
+        pblock->vtx[0].vout[0].nValue = GetBlockValue(pindexPrev->nHeight+1, nFees, pindexPrev->GetBlockHash());
         pblocktemplate->vTxFees[0] = -nFees;
 
         // Fill in header
@@ -551,6 +549,10 @@ void static MinerWaitOnline()
 
 void static BitcoinMiner(CWallet *pwallet)
 {
+    LogPrintf("BitcoinMiner started\n");
+    SetThreadPriority(THREAD_PRIORITY_LOWEST);
+    RenameThread("bitcoin-miner");
+
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
@@ -558,6 +560,14 @@ void static BitcoinMiner(CWallet *pwallet)
     while(true)
     {
         MinerWaitOnline();
+		try { 
+			while (true) {
+				if (Params().NetworkID() != CChainParams::REGTEST) {
+					// Busy-wait for the network to come online so we don't waste time mining
+					// on an obsolete chain. In regtest mode we expect to fly solo.
+					while (vNodes.empty())
+						MilliSleep(1000);
+				}
 
         //
         // Create new block
@@ -669,17 +679,20 @@ void static BitcoinMiner(CWallet *pwallet)
             if (pindexPrev != chainActive.Tip())
                 break;
 
-            // Update nTime every few seconds
-            UpdateTime(*pblock, pindexPrev);
-            nBlockTime = ByteReverse(pblock->nTime);
-            if (TestNet())
-            {
-                // Changing pblock->nTime can change work required on testnet:
-                nBlockBits = ByteReverse(pblock->nBits);
-                hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
-            }
-        }
-    }
+					// Update nTime every few seconds
+					UpdateTime(*pblock, pindexPrev);
+					nBlockTime = ByteReverse(pblock->nTime);
+					if (TestNet())
+					{
+						// Changing pblock->nTime can change work required on testnet:
+						nBlockBits = ByteReverse(pblock->nBits);
+						hashTarget = CBigNum().SetCompact(pblock->nBits).getuint256();
+					}
+				}
+			}
+		}
+		catch (...){}
+	}
 }
 
 void static ScryptMiner(CWallet *pwallet)

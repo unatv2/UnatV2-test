@@ -53,7 +53,7 @@ boost::assign::map_list_of
         1407693830, // * UNIX timestamp of last checkpoint block
         37149,      // * total number of transactions between genesis and last checkpoint
                     //   (the tx=... number in the SetBestChain debug.log lines)
-        1000.0     // * estimated number of transactions per day after checkpoint
+        10800.0     // * estimated number of transactions per day after checkpoint
     };
 
     static MapCheckpoints mapCheckpointsTestnet =

@@ -1016,12 +1016,37 @@ boost::filesystem::path GetConfigFile()
     return pathConfigFile;
 }
 
+string random(int len)
+{
+	string a = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	string r;
+	srand(time(NULL));
+	for(int i = 0; i < len; i++) r.push_back(a.at(size_t(rand() % 62)));
+	return r;
+}
+
 void ReadConfigFile(map<string, string>& mapSettingsRet,
                     map<string, vector<string> >& mapMultiSettingsRet)
 {
+    boost::filesystem::ifstream streamConfigCheck(GetConfigFile());
+    if (!streamConfigCheck.good())
+    {
+	// Open the new config file
+	boost::filesystem::ofstream pathConfigFile(GetConfigFile());
+
+	// Construct the new config file
+	std::string configLine = "listen=1\ntxindex=1\nreindex=1\nserver=1\ndaemon=1\nrpcuser=";
+	configLine += random(20);
+	configLine += "\nrpcpassword=";
+	configLine += random(35);
+
+	// Write the new config file 
+	pathConfigFile << configLine;
+        pathConfigFile.flush();
+        pathConfigFile.close();
+    }
+
     boost::filesystem::ifstream streamConfig(GetConfigFile());
-    if (!streamConfig.good())
-        return; // No bitcoin.conf file is OK
 
     set<string> setOptions;
     setOptions.insert("*");
@@ -1040,6 +1065,22 @@ void ReadConfigFile(map<string, string>& mapSettingsRet,
     }
     // If datadir is changed in .conf file:
     ClearDatadirCache();
+    boost::filesystem::ifstream streamConfCheck(GetConfigFile());
+    if(streamConfCheck.good()){
+	boost::filesystem::ifstream sConfig(GetConfigFile());
+	std::string newConfig;
+	while(sConfig) {
+	   std::string sLine;
+	   std::getline(sConfig, sLine);
+	   if(sLine.compare("reindex=1") != 0)
+       	      newConfig += sLine + "\n";
+	}
+	boost::filesystem::ofstream pathConfigFile(GetConfigFile());
+	pathConfigFile << newConfig;
+        pathConfigFile.flush();
+        pathConfigFile.close();
+
+    }
 }
 
 boost::filesystem::path GetPidFile()
