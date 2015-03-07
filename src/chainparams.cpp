@@ -58,15 +58,11 @@ public:
         genesis.nVersion = 1;
         genesis.nTime    = 1405002383;
         genesis.nBits    = 0x1d00ffff;
-        genesis.nNonce   = 231373351; //2447652
- 
-		printf("%s\n", genesis.hashMerkleRoot.ToString().c_str());
-        printf("genesis.nTime = %u \n", genesis.nTime);
-        printf("genesis.nNonce = %u \n", genesis.nNonce);
-        printf("genesis.GetHash = %s\n", genesis.GetHash().ToString().c_str());
-		hashGenesisBlock = genesis.GetHash();
- 		assert(genesis.hashMerkleRoot == uint256("0xa99c7c572f07503bb52506cc6bcc18a0653d78c9c34fd7b576fe093723554bac"));
+        genesis.nNonce   = 231373351;
 		
+		hashGenesisBlock = genesis.GetHash();
+		
+ 		assert(genesis.hashMerkleRoot == uint256("0xa99c7c572f07503bb52506cc6bcc18a0653d78c9c34fd7b576fe093723554bac"));		
         assert(hashGenesisBlock == uint256("0x00000000692c5ed1da2f480cd8d6aa6aa6b16deff49c26bf5a773120328b8b12")); //0x7497ea1b465eb39f1c8f507bc877078fe016d6fcb6dfad3a64c98dcc6e1e8496
         
         

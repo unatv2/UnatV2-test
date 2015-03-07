@@ -75,12 +75,9 @@ CScript COINBASE_FLAGS;
 
 const string strMessageMagic = "UnattainiumV2 Signed Message:\n";
 
-//double dHashesPerSec = 0.0;
-//int64 nHPSTimerStart = 0;
-
 // Settings
 int miningAlgo = ALGO_SHA256D;
-//int64 nTransactionFee = 0;
+
 long hex2long(const char* hexString);
 
 // Internal stuff
@@ -1382,7 +1379,7 @@ static unsigned int GetNextWorkRequiredV1(const CBlockIndex* pindexLast, const C
 
     // Limit adjustment step
     int64_t nActualTimespan = pindexLast->GetBlockTime() - pindexFirst->GetBlockTime();
-    printf("  nActualTimespan = %d  before bounds\n", nActualTimespan);
+    //printf("  nActualTimespan = %d  before bounds\n", nActualTimespan);
     if (nActualTimespan < lTargetTimespan/4)
         nActualTimespan = lTargetTimespan/4;
     if (nActualTimespan > lTargetTimespan*4)
