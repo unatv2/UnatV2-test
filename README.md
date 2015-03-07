@@ -12,6 +12,12 @@ git clone git://github.com/unattainiumv2/UnattainiumV2.git
 
 cd UnattainiumV2
 
+chmod +x autogen.sh
+
+chmod +x share/genbuild.sh
+
+chmod +x src/leveldb/build_detect_platform
+
 ./autogen.sh
 
 ./configure
