@@ -3662,7 +3662,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                  (pfrom->cleanSubVer == "/Satoshi:0.8.6/") ||
 				 (pfrom->cleanSubVer == "/Satoshi:0.8.9/") ||
                  (pfrom->cleanSubVer == "/UnattainiumV2:0.9.2/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.4/") ||
+                 (pfrom->cleanSubVer == "/80900/") ||
+				 (pfrom->cleanSubVer == "/80600/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.5/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.6/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.7/") ||
