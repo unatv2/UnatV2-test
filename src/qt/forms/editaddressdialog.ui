@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>457</width>
-    <height>126</height>
+    <height>130</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,6 +50,33 @@
       <widget class="QValidatedLineEdit" name="addressEdit">
        <property name="toolTip">
         <string>The address associated with this address list entry. This can only be modified for sending addresses.</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_3">
+       <property name="maximumSize">
+        <size>
+         <width>439</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string> Please wait - scanning for transactions matching this address...</string>
+       </property>
+      </widget>
+     </item>
+     <item alignment="Qt::AlignRight">
+      <widget class="QCheckBox" name="rescanCheckBox">
+       <property name="text">
+        <string>Rescan</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

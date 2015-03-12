@@ -1212,7 +1212,8 @@ static const int64_t patchBlockRewardDuration = 10080; // 10080 blocks main net 
 static const int64_t patchBlockRewardDuration2 = 80160; // 80160 blocks main net change
 #define HARDFORK1_BLOCK 50
 #define HARDFORK2_BLOCK 50000
-static const int64_t nDiffChangeTarget = 67200; // Patch effective @ block 67200
+#define HARDFORK3_BLOCK 571100 // multi-algo patch and new rewards
+
 static int64_t GenerateRandomInt(unsigned int s, int64_t nMin, int64_t nMax)
 {
    random::mt19937 gen(s);
@@ -1268,26 +1269,34 @@ int64_t GetBlockValue(int nHeight, int64_t nFees, uint256 prevHash)
     std::string cseed_str = prevHash.ToString().substr(7,7);
     const char* cseed = cseed_str.c_str();
 	long seed = hex2long(cseed);
-    if (nHeight <= HARDFORK1_BLOCK)
+    if(nHeight <= HARDFORK1_BLOCK)
+	{
         nSubsidy = 200 * COIN;
-        
-    if (nHeight >= HARDFORK2_BLOCK)
+    }    
+    else if(nHeight >= HARDFORK2_BLOCK && nHeight < HARDFORK3_BLOCK)
     {
 
 
        nSubsidy = (GenerateRandomInt(seed, 1, 100) * COIN) / 1000;
        return nSubsidy;
     }
+	else if (nHeight >= HARDFORK3_BLOCK) //multi-algo kicks in too
+	{
+	    nSubsidy = 0.25 * COIN;
+	}
 
     return nSubsidy + nFees;
 }
 
-static const int64_t nTargetTimespanORIG = 18000;
-static const int64_t nTargetSpacingORIG = 9000;
-static const int64_t nIntervalORIG = nTargetTimespanORIG / nTargetSpacingORIG;
-static const int64_t nTargetTimespan = 32;
-static const int64_t nTargetSpacing = 8;
+static const int64_t nTargetTimespanORIG = 18000; //hardfork1
+static const int64_t nTargetSpacingORIG = 9000; //hardfork1
+static const int64_t nIntervalORIG = nTargetTimespanORIG / nTargetSpacingORIG; //hardfork1
+static const int64_t nTargetTimespan = 32; // hardfork2
+static const int64_t nTargetSpacing = 8; // hardfork 2
 static const int64_t nInterval = nTargetTimespan / nTargetSpacing;
+//static const int64_t nTargetTimespanRe = 1*60; // 60 Seconds digibyte
+//static const int64_t nTargetSpacingRe = 1*60; // 60 seconds digibyte
+//static const int64_t nIntervalRe = nTargetTimespanRe / nTargetSpacingRe; // 1 block  digibyte
 
 //MultiAlgo Target updates
 static const int64_t multiAlgoTargetTimespan = 150; // 2.5 minutes (NUM_ALGOS * 30 seconds)
@@ -1306,6 +1315,8 @@ static const int64_t nLocalDifficultyAdjustment = 4; // 4% down, 16% up
 
 static const int64_t nTargetTimespanAdjDown = multiAlgoTargetTimespan * (100 + nMaxAdjustDown) / 100;
 
+
+
 //
 // minimum amount of work that could possibly be required nTime after
 // minimum work required was nBase
@@ -1315,18 +1326,18 @@ unsigned int ComputeMinWork(unsigned int nBase, int64_t nTime)
 {
  return Params().ProofOfWorkLimit(ALGO_SHA256D).GetCompact(); 
 
-    CBigNum bnResult;
-    bnResult.SetCompact(nBase);
-    while (nTime > 0 && bnResult < Params().ProofOfWorkLimit(ALGO_SHA256D))
-    {
+//    CBigNum bnResult;
+//    bnResult.SetCompact(nBase);
+//    while (nTime > 0 && bnResult < Params().ProofOfWorkLimit(ALGO_SHA256D))
+//    {
         // Maximum 400% adjustment...
-        bnResult *= 4;
+//        bnResult *= 4;
         // ... in best-case exactly 4-times-normal target time
-        nTime -= nTargetTimespan*4;
-    }
-    if (bnResult > Params().ProofOfWorkLimit(ALGO_SHA256D))
-        bnResult = Params().ProofOfWorkLimit(ALGO_SHA256D);
-    return bnResult.GetCompact();
+//        nTime -= nTargetTimespan*4;
+//    }
+//    if (bnResult > Params().ProofOfWorkLimit(ALGO_SHA256D))
+//        bnResult = Params().ProofOfWorkLimit(ALGO_SHA256D);
+//    return bnResult.GetCompact();
 } 
 
 static const int64_t nMinActualTimespan = nAveragingTargetTimespan * (100 - nMaxAdjustUp) / 100;
@@ -1486,8 +1497,10 @@ static unsigned int GetNextWorkRequiredV3(const CBlockIndex* pindexLast, const C
 
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, int algo)
 {
-    
+    if (pindexLast->nHeight < multiAlgoDiffChangeTarget)
         return GetNextWorkRequiredV1(pindexLast, pblock, algo);
+	else
+		return GetNextWorkRequiredV3(pindexLast, pblock, algo); //digishield multi algo takes effect
 }
 
 bool CheckProofOfWork(uint256 hash, unsigned int nBits, int algo)
@@ -2598,6 +2611,10 @@ bool AcceptBlock(CBlock& block, CValidationState& state, CDiskBlockPos* dbp)
             return state.DoS(100, error("AcceptBlock() : incorrect proof of work"),
                              REJECT_INVALID, "bad-diffbits");
 
+	 if ( nHeight < multiAlgoDiffChangeTarget && block.GetAlgo() != ALGO_SHA256D )
+            return state.Invalid(error("AcceptBlock() : incorrect hasing algo, only sha256d accepted until the switch"), 
+			    REJECT_INVALID, "bad-hashalgo");
+
         // Check timestamp against prev
         if (block.GetBlockTime() <= pindexPrev->GetMedianTimePast())
             return state.Invalid(error("AcceptBlock() : block's timestamp is too early"),
@@ -3640,11 +3657,11 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (!vRecv.empty()) {
             vRecv >> pfrom->strSubVer;
             pfrom->cleanSubVer = SanitizeString(pfrom->strSubVer);
-/*
+//start disconnect
             if (
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.1/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.2/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.3/") ||
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.6/") ||
+				 (pfrom->cleanSubVer == "/Satoshi:0.8.9/") ||
+                 (pfrom->cleanSubVer == "/UnattainiumV2:0.9.2/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.4/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.5/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.6/") ||
@@ -3653,16 +3670,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.9/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.10/") ||
                  (pfrom->cleanSubVer == "/Satoshi:0.8.99.11/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.12/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.1/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.2/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.3/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.4/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.5/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.6/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.7/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.8/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.9.2.9/")
+                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.12/") 
                )
             {
                 // disconnect from peers older than this proto version
@@ -3672,7 +3680,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                 pfrom->fDisconnect = true;
                 return false;
             }
-*/
+// end disconnect
         }
         if (!vRecv.empty())
             vRecv >> pfrom->nStartingHeight;

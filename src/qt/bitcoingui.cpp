@@ -14,6 +14,7 @@
 #include "optionsmodel.h"
 #include "rpcconsole.h"
 #include "utilitydialog.h"
+#include "chatwindow.h"
 #ifdef ENABLE_WALLET
 #include "walletframe.h"
 #include "walletmodel.h"
@@ -119,6 +120,7 @@ BitcoinGUI::BitcoinGUI(bool fIsTestnet, QWidget *parent) :
     {
         /** Create wallet frame and make it the central widget */
         walletFrame = new WalletFrame(this);
+		
         setCentralWidget(walletFrame);
     } else
 #endif
@@ -128,7 +130,7 @@ BitcoinGUI::BitcoinGUI(bool fIsTestnet, QWidget *parent) :
          */
         setCentralWidget(rpcConsole);
     }
-
+	
     // Accept D&D of URIs
     setAcceptDrops(true);
 
@@ -147,7 +149,7 @@ BitcoinGUI::BitcoinGUI(bool fIsTestnet, QWidget *parent) :
 
     // Create status bar
     statusBar();
-
+	
     // Status bar notification icons
     QFrame *frameBlocks = new QFrame();
     frameBlocks->setContentsMargins(0,0,0,0);
@@ -247,6 +249,10 @@ void BitcoinGUI::createActions(bool fIsTestnet)
     historyAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_4));
     tabGroup->addAction(historyAction);
 
+	chatAction = new QAction(QIcon(":/icons/chat"), tr("&Chat"), this);
+	chatAction->setToolTip(tr("View chat"));
+	chatAction->setCheckable(true);
+	tabGroup->addAction(chatAction);
     // These showNormalIfMinimized are needed because Send Coins and Receive Coins
     // can be triggered from the tray menu, and need to show the GUI to be useful.
     connect(overviewAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
@@ -257,6 +263,7 @@ void BitcoinGUI::createActions(bool fIsTestnet)
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
+	connect(chatAction, SIGNAL(triggered()), this, SLOT(gotoChatPage()));
 
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setStatusTip(tr("Quit application"));
@@ -295,7 +302,8 @@ void BitcoinGUI::createActions(bool fIsTestnet)
     signMessageAction->setStatusTip(tr("Sign messages with your UnattainiumV2 addresses to prove you own them"));
     verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
     verifyMessageAction->setStatusTip(tr("Verify messages to ensure they were signed with specified UnattainiumV2 addresses"));
-
+	reloadUiAction = new QAction(QIcon(":/icons/notsynced"), tr("&Reload UI..."), this);
+    reloadUiAction->setStatusTip(tr("Reloads your stylesheet.qss"));
     openRPCConsoleAction = new QAction(QIcon(":/icons/debugwindow"), tr("&Debug window"), this);
     openRPCConsoleAction->setStatusTip(tr("Open debugging and diagnostic console"));
 
@@ -326,6 +334,7 @@ void BitcoinGUI::createActions(bool fIsTestnet)
         connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
         connect(usedSendingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedSendingAddresses()));
         connect(usedReceivingAddressesAction, SIGNAL(triggered()), walletFrame, SLOT(usedReceivingAddresses()));
+		connect(reloadUiAction, SIGNAL(triggered()), walletFrame, SLOT(reloadUi()));
         connect(openAction, SIGNAL(triggered()), this, SLOT(openClicked()));
     }
 #endif
@@ -353,6 +362,8 @@ void BitcoinGUI::createMenuBar()
         file->addAction(usedSendingAddressesAction);
         file->addAction(usedReceivingAddressesAction);
         file->addSeparator();
+		file->addAction(reloadUiAction);
+		file->addSeparator();
     }
     file->addAction(quitAction);
 
@@ -386,6 +397,7 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(historyAction);
+		toolbar->addAction(chatAction);
         overviewAction->setChecked(true);
     }
 }
@@ -558,6 +570,10 @@ void BitcoinGUI::showHelpMessageClicked()
 }
 
 #ifdef ENABLE_WALLET
+void BitcoinGUI::reloadUi()
+{
+    if (walletFrame) walletFrame->reloadUi();
+}
 void BitcoinGUI::openClicked()
 {
     OpenURIDialog dlg(this);
@@ -578,6 +594,13 @@ void BitcoinGUI::gotoHistoryPage()
     historyAction->setChecked(true);
     if (walletFrame) walletFrame->gotoHistoryPage();
 }
+
+void BitcoinGUI::gotoChatPage()
+{
+    chatAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoChatPage();
+}
+
 
 void BitcoinGUI::gotoReceiveCoinsPage()
 {

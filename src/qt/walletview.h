@@ -16,6 +16,9 @@ class SendCoinsRecipient;
 class TransactionView;
 class WalletModel;
 
+class ChatWindow;
+
+
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 class QProgressDialog;
@@ -53,6 +56,8 @@ public:
 private:
     ClientModel *clientModel;
     WalletModel *walletModel;
+	ChatWindow *chatWindow;
+
 
     OverviewPage *overviewPage;
     QWidget *transactionsPage;
@@ -63,11 +68,17 @@ private:
 
     QProgressDialog *progressDialog;
 
+    /** Create the main UI actions. */
+    void createActions();
+    /** Create the menu bar and sub-menus. */
+
 public slots:
     /** Switch to overview (home) page */
     void gotoOverviewPage();
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
+    /** Switch to chat page */
+    void gotoChatPage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */
@@ -77,9 +88,9 @@ public slots:
     void gotoSignMessageTab(QString addr = "");
     /** Show Sign/Verify Message dialog and switch to verify message tab */
     void gotoVerifyMessageTab(QString addr = "");
-
+	void reloadUi();
     /** Show incoming transaction notification for new transactions.
-
+ 
         The new items are those between start and end inclusive, under the given parent item.
     */
     void processNewTransaction(const QModelIndex& parent, int start, int /*end*/);

@@ -15,6 +15,7 @@
 
 const QString AddressTableModel::Send = "S";
 const QString AddressTableModel::Receive = "R";
+const QString AddressTableModel::Import = "I";
 
 struct AddressTableEntry
 {
@@ -340,7 +341,12 @@ void AddressTableModel::updateEntry(const QString &address,
     priv->updateEntry(address, label, isMine, purpose, status);
 }
 
-QString AddressTableModel::addRow(const QString &type, const QString &label, const QString &address)
+void AddressTableModel::scanWallet()
+{
+	wallet->ScanForWalletTransactions(chainActive.Genesis(), true);
+}
+
+QString AddressTableModel::addRow(const QString &type, const QString &label, const QString &address, const bool rescan, int addressType)
 {
     std::string strLabel = label.toStdString();
     std::string strAddress = address.toStdString();

@@ -686,7 +686,7 @@ enum BlockStatus {
     BLOCK_FAILED_MASK        =   96
 };
 
-const int64_t multiAlgoDiffChangeTarget = 0; // block where multi-algo work weighting starts 145000
+const int64_t multiAlgoDiffChangeTarget = 571100; // block where multi-algo work weighting starts
 
 /** The block chain is a tree shaped structure starting with the
  * genesis block at the root, with each block potentially having multiple
