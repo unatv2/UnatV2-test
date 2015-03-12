@@ -75,7 +75,12 @@ public:
 		vSeeds.push_back(CDNSSeedData("seed #4", "70.70.136.216"));
 		vSeeds.push_back(CDNSSeedData("seed #5", "75.130.163.51"));
 		vSeeds.push_back(CDNSSeedData("seed #6", "76.164.203.26"));
-		vSeeds.push_back(CDNSSeedData("seed #6", "76.164.237.242"));
+		vSeeds.push_back(CDNSSeedData("seed #7", "76.164.237.242"));
+		vSeeds.push_back(CDNSSeedData("seed #8", "srv4.hardcoreminers.com:30300"));
+		vSeeds.push_back(CDNSSeedData("seed #9", "srv4.hardcoreminers.com:30880"));
+		
+		
+		
 
         base58Prefixes[PUBKEY_ADDRESS] = list_of(0);
         base58Prefixes[SCRIPT_ADDRESS] = list_of(5);
