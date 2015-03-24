@@ -76,8 +76,8 @@ public:
 		vSeeds.push_back(CDNSSeedData("seed #5", "75.130.163.51"));
 		vSeeds.push_back(CDNSSeedData("seed #6", "76.164.203.26"));
 		vSeeds.push_back(CDNSSeedData("seed #7", "76.164.237.242"));
-		vSeeds.push_back(CDNSSeedData("seed #8", "srv4.hardcoreminers.com:30300"));
-		vSeeds.push_back(CDNSSeedData("seed #9", "srv4.hardcoreminers.com:30880"));
+		vSeeds.push_back(CDNSSeedData("seed #8", "node.unattainium.tk:30300"));
+		vSeeds.push_back(CDNSSeedData("seed #9", "node.unattainium.tk:30880"));
 		
 		
 		

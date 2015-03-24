@@ -4,7 +4,11 @@ Some notes on how to build UnattainiumV2 in Unix.
 
 To Build
 ---------------------
-
+	git clone git://github.com/unatv2/unatv2.git unattainiumv2
+	cd unattainiumv2
+	chmod +x autogen.sh
+	chmod +x share/genbuild.sh
+	chmod +x src/leveldb/build_detect_platform
 	./autogen.sh
 	./configure
 	make

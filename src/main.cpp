@@ -1212,7 +1212,7 @@ static const int64_t patchBlockRewardDuration = 10080; // 10080 blocks main net 
 static const int64_t patchBlockRewardDuration2 = 80160; // 80160 blocks main net change
 #define HARDFORK1_BLOCK 50
 #define HARDFORK2_BLOCK 50000
-#define HARDFORK3_BLOCK 571100 // multi-algo patch and new rewards
+#define HARDFORK3_BLOCK 575000 // multi-algo patch and new rewards
 
 static int64_t GenerateRandomInt(unsigned int s, int64_t nMin, int64_t nMax)
 {
@@ -3658,7 +3658,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             vRecv >> pfrom->strSubVer;
             pfrom->cleanSubVer = SanitizeString(pfrom->strSubVer);
 //start disconnect
-            if (
+            /*if (
                  (pfrom->cleanSubVer == "/Satoshi:0.8.6/") ||
 				 (pfrom->cleanSubVer == "/Satoshi:0.8.9/") ||
                  (pfrom->cleanSubVer == "/UnattainiumV2:0.9.2/") ||
@@ -3680,7 +3680,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                     strprintf("Version must be %d or greater", MIN_PEER_PROTO_VERSION));
                 pfrom->fDisconnect = true;
                 return false;
-            }
+            }*/
 // end disconnect
         }
         if (!vRecv.empty())

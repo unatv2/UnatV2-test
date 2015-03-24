@@ -8,9 +8,9 @@ sudo apt-get install libboost-all-dev
 
 sudo apt-get install libdb4.8-dev
 
-git clone git://github.com/unattainiumv2/UnattainiumV2.git
+git clone git://github.com/unatv2/unatv2.git unattainiumv2
 
-cd UnattainiumV2
+cd unattainiumv2
 
 chmod +x autogen.sh
 
@@ -48,7 +48,7 @@ out collectively by the network. UnattainiumV2 Core is the name of open source
 software which enables the use of this currency.
 
 For more information, as well as an immediately useable, binary version of
-the UnattainiumV2 Core software, see http://www.unat.ga
+the UnattainiumV2 Core software, see http://www.unattainium.tk
 
 Technical Specifications
 ---------------------
