@@ -1212,7 +1212,7 @@ static const int64_t patchBlockRewardDuration = 10080; // 10080 blocks main net 
 static const int64_t patchBlockRewardDuration2 = 80160; // 80160 blocks main net change
 #define HARDFORK1_BLOCK 50
 #define HARDFORK2_BLOCK 50000
-#define HARDFORK3_BLOCK 575000 // multi-algo patch and new rewards
+#define HARDFORK3_BLOCK 580000 // multi-algo patch and new rewards
 
 static int64_t GenerateRandomInt(unsigned int s, int64_t nMin, int64_t nMax)
 {
@@ -3657,21 +3657,13 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (!vRecv.empty()) {
             vRecv >> pfrom->strSubVer;
             pfrom->cleanSubVer = SanitizeString(pfrom->strSubVer);
-//start disconnect
+			//start disconnect old nodes
             /*if (
                  (pfrom->cleanSubVer == "/Satoshi:0.8.6/") ||
 				 (pfrom->cleanSubVer == "/Satoshi:0.8.9/") ||
                  (pfrom->cleanSubVer == "/UnattainiumV2:0.9.2/") ||
                  (pfrom->cleanSubVer == "/80900/") ||
-				 (pfrom->cleanSubVer == "/80600/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.5/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.6/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.7/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.8/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.9/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.10/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.11/") ||
-                 (pfrom->cleanSubVer == "/Satoshi:0.8.99.12/") 
+				 (pfrom->cleanSubVer == "/80600/") 
                )
             {
                 // disconnect from peers older than this proto version
@@ -3681,7 +3673,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
                 pfrom->fDisconnect = true;
                 return false;
             }*/
-// end disconnect
+			// end disconnect
         }
         if (!vRecv.empty())
             vRecv >> pfrom->nStartingHeight;
