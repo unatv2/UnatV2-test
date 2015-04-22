@@ -10,10 +10,10 @@
 BOOST_AUTO_TEST_SUITE(main_tests)
 
 BOOST_AUTO_TEST_CASE(subsidy_limit_test)
-{
+{ 
     uint64_t nSum = 0;
     for (int nHeight = 0; nHeight < 14000000; nHeight += 1000) {
-        uint64_t nSubsidy = GetBlockValue(nHeight, 0);
+        uint64_t nSubsidy = GetBlockValue(nHeight, 0, uint256 prevHash);
         BOOST_CHECK(nSubsidy <= 50 * COIN);
         nSum += nSubsidy * 1000;
         BOOST_CHECK(MoneyRange(nSum));
